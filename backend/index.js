@@ -14,6 +14,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
+// request logging middleware
+app.use((req, res, next) => {
+    const start = Date.now();
+    const timestamp = new Date().toISOString();
+
+    // wait for the finish event to log after the response is sent
+    res.on('finish', () => {
+        const duration = Date.now() - start;
+        console.log(`[${timestamp}] ${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`);
+    });
+
+    next();
+});
+
+
+const propertiesRoute = require('./routes/properties');
+app.use('/api/properties', propertiesRoute);
+
 // GET api/health - endpoint which verifies server and db status 
 app.get('/api/health', async (req, res) => {
     try{
@@ -31,6 +50,7 @@ app.get('/api/health', async (req, res) => {
 
 const PORT = process.env.PORT || 5001;
 // set the port from .env to fallback to port 5000 if it isn't found
+// had to make it 5001 bc 5000 was occupied by macos
 
 // start server, listen for incoming requests
 app.listen(PORT, () => {
