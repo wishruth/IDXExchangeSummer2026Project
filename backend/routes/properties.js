@@ -67,7 +67,7 @@ router.get('/', async (req, res) => {
         }
 
         if (baths){
-            conditions += ' AND LM_Dec3 >= ?';
+            conditions += ' AND LM_Dec_3 >= ?';
             queryValues.push(Number(baths));
         }
 
@@ -92,7 +92,7 @@ router.get('/', async (req, res) => {
         // B - Data Query 
         // needs to grab actual property rows but restrict using limit and offset 
         // for pagination
-        const dataQuery = 'SELECT *' + conditions + 'LIMIT ? OFFSET ?';
+        const dataQuery = 'SELECT *' + conditions + ' LIMIT ? OFFSET ?';
         // create new arr for data query by spreading existing filter values and 
         // adding the pagination #s at the end
         const dataValues = [...queryValues, Number(limit), Number(offset)];
@@ -143,7 +143,7 @@ router.get('/:id/openhouses', async (req, res) => {
         const [openHouses] = await pool.query(
             `SELECT * FROM rets_openhouse 
              WHERE L_ListingID = ? 
-             ORDER BY OpenHouse_Date ASC, OH_StartTime ASC`, 
+             ORDER BY OpenHouseDate ASC, OH_StartTime ASC`, 
             [id]
         );
 
